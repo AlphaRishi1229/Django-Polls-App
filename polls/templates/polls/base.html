@@ -11,6 +11,16 @@
         <div class="page-header">
             <h1><a href="{% url 'polls:index' %}">Polls Application</a></h1>
             <h2><a href="/admin">Admin Login</a></h2>
+            {% if user.is_authenticated %}
+            <p class="text-right" href="">Currently Logged In As: {{request.user}}</p>
+            <p class="text-right" onclick=logout()>Logout</p>
+            {% else %}
+            <p class="text-right" onclick=login()>Not Logged in. Click here to login</p>
+            <button class= 'btn btn-success pull-right' onclick=signup()>
+                User SignUp
+            </button>
+            {% endif %}
+            
         </div>
         <div class="content container">
             <div class="row">
@@ -22,3 +32,24 @@
         </div>
     </body>
 </html>
+
+<script>
+function signup()
+{
+     location.href = "{% url 'polls:signup' %}";
+} 
+</script>
+
+<script>
+function login()
+{
+    location.href = "{% url 'polls:login' %}"
+}
+</script>
+
+<script>
+function logout()
+{
+    location.href = "{% url 'polls:logout' %}"
+}
+</script>

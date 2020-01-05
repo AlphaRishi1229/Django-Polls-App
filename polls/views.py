@@ -5,6 +5,7 @@ from django.views import generic
 from django.utils import timezone
 from django.contrib.auth import login as auth_login, authenticate, logout as auth_logout
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
+from .new_poll import PostQuestion,PostChoices
 import logging
 
 from .models import Question, Choice, User
@@ -87,3 +88,35 @@ def logout(request):
     message = "Logged Out Successfully"
     return redirect('polls:login')
     
+def new_poll(request):
+    if request.method == "POST":
+        form = PostQuestion(request.POST)
+        if form.is_valid():
+            quest = form.save(commit=False)
+            quest.created_by = request.user
+            quest.pub_date = timezone.now()
+            question = form.cleaned_data.get('question_text')
+            quest.save()
+            print(question)
+            return HttpResponseRedirect(reverse('polls:new_choice', args=(quest.id,)))
+    else:
+        form = PostQuestion()
+    return render(request, 'polls/new_poll.html',{'form':form})
+
+def new_choice(request,question_id):
+    if request.method=="POST":
+        form = PostChoices(request.POST)
+        if form.is_valid():
+            choice = form.save(commit=False)
+            choice.question_id = question_id
+            choices = form.cleaned_data.get('choice_text')
+            a = Choice.objects.filter(choice_text=choices,question_id=question_id)
+            if len(a) >= 1:
+                return render(request,'polls/new_choice.html',{'error_message':"Choice already added"})
+            else:
+                choice.save()
+                return HttpResponseRedirect(reverse('polls:new_choice', args=(question_id,)))
+            print(choices)
+    else:
+        form = PostChoices()
+    return render(request,'polls/new_choice.html',{'form':form})

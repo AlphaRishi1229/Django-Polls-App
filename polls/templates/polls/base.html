@@ -9,6 +9,7 @@
     </head>
     <body>
         <div class="page-header">
+            <p><span class="glyphicon glyphicon-plus" onclick=createpoll() ></span></p>
             <h1><a href="{% url 'polls:index' %}">Polls Application</a></h1>
             <h2><a href="/admin">Admin Login</a></h2>
             {% if user.is_authenticated %}
@@ -51,5 +52,12 @@ function login()
 function logout()
 {
     location.href = "{% url 'polls:logout' %}"
+}
+</script>
+
+<script>
+function createpoll()
+{
+    location.href = "{% url 'polls:new_poll' %}"
 }
 </script>

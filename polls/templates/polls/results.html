@@ -11,11 +11,5 @@
 <a href="{% url 'polls:detail' question.id %}">Vote again?</a>
 <a href="{% url 'polls:index' %}">Get to Main Page</a>
 
-<h2> Reviews for this question </h2>
-<ul>
-{% for review in question.reviews_set.all %}
-    <li>{{ review.review }}</li>
-{% endfor %}
-</ul>
 <a href="{% url 'polls:review' question.id %}"> Add a Review? </a>
 {% endblock %}

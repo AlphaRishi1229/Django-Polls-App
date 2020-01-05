@@ -128,15 +128,16 @@ def review(request,question_id):
         if form.is_valid():
             rev = form.save(commit=False)
             rev.questions_id_id = question_id
-            a = User.objects.get(username=request.user)
             try:
+                a = User.objects.get(username=request.user)
+            except:
+                return HttpResponseRedirect(reverse('polls:login'))
+            else:
                 rev.user_id_id = a.id
-            except 'DoesNotExist':
-                return render(request,'polls/login.html',{'error_message':"You need to login first"})
-            reviews = form.cleaned_data.get('review')
-            rev.save()
-            print(reviews)
-            return HttpResponseRedirect(reverse('polls:index'))
+                reviews = form.cleaned_data.get('review')
+                rev.save()
+                print(reviews)
+                return HttpResponseRedirect(reverse('polls:index'))
     else:
         form = Review()
     return render(request,'polls/new_review.html',{'form':form})

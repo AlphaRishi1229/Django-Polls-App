@@ -2,11 +2,12 @@
 
 {% block content %}
 
-{% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
-
-  <h2>Login here</h2>
+  <h2>Login here first</h2>
   <form method = "post">
     {% csrf_token %}
+    {% if error_message %}
+    <p><strong>{{ error_message }}</strong></p>
+    {% endif %}
     {{ form.as_p }}
     <button type="submit">Login</button>
   </form>

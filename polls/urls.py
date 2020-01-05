@@ -13,4 +13,5 @@ urlpatterns = [
     path('logout/',views.logout,name='logout'),
     path('create_poll/',views.new_poll,name='new_poll'),
     path('<int:question_id>/create_choice/',views.new_choice,name='new_choice'),
+    path('<int:question_id>/review/',views.review,name='review'),
 ]

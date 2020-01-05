@@ -5,7 +5,7 @@ import datetime
 
 class Question(models.Model):
     question_text = models.CharField(max_length = 200)
-    created_by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL,null=True)
+    created_by = models.IntegerField(null=True)
     pub_date = models.DateTimeField('Date Published')
     
     def __str__(self):
@@ -34,3 +34,10 @@ class User(models.Model):
     def __str__(self):
         return self.username
     
+class Reviews(models.Model):
+    questions_id = models.ForeignKey(Question, on_delete=models.CASCADE)
+    user_id = models.ForeignKey(User, on_delete=models.SET_NULL,null=True)
+    review = models.CharField(max_length=5000)
+    
+    def __str__(self):
+        return self.review

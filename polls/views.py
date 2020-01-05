@@ -5,10 +5,10 @@ from django.views import generic
 from django.utils import timezone
 from django.contrib.auth import login as auth_login, authenticate, logout as auth_logout
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
-from .new_poll import PostQuestion,PostChoices
+from .new_poll import PostQuestion,PostChoices,Review
 import logging
 
-from .models import Question, Choice, User
+from .models import Question, Choice, User, Reviews
 
 logger = logging.getLogger(__name__)
 
@@ -93,7 +93,8 @@ def new_poll(request):
         form = PostQuestion(request.POST)
         if form.is_valid():
             quest = form.save(commit=False)
-            quest.created_by = request.user
+            a = User.objects.get(username=request.user)
+            quest.created_by = a.id
             quest.pub_date = timezone.now()
             question = form.cleaned_data.get('question_text')
             quest.save()
@@ -120,3 +121,19 @@ def new_choice(request,question_id):
     else:
         form = PostChoices()
     return render(request,'polls/new_choice.html',{'form':form})
+
+def review(request,question_id):
+    if request.method == "POST":
+        form = Review(request.POST)
+        if form.is_valid():
+            rev = form.save(commit=False)
+            rev.questions_id_id = question_id
+            a = User.objects.get(username=request.user)
+            rev.user_id_id = a.id
+            reviews = form.cleaned_data.get('review')
+            rev.save()
+            print(reviews)
+            return HttpResponseRedirect(reverse('polls:index'))
+    else:
+        form = Review()
+    return render(request,'polls/new_review.html',{'form':form})

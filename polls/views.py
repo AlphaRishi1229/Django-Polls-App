@@ -128,11 +128,9 @@ def review(request,question_id):
         if form.is_valid():
             rev = form.save(commit=False)
             rev.questions_id_id = question_id
-            try:
-                a = User.objects.get(username=request.user)
-            except:
-                a = "User Not Found"
-            rev.user_id_id = a.id
+            a = User.objects.get(username=request.user)
+            #rev.user_id_id = a.id
+            print(a)
             reviews = form.cleaned_data.get('review')
             rev.save()
             print(reviews)

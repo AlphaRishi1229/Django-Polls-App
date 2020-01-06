@@ -144,9 +144,13 @@ def review(request,question_id):
 
 def profile(request):
     cur_user = request.user
-    a = User.objects.get(username=cur_user)
-    polls = Question.objects.filter(created_by=a.id)
-    return render(request,'polls/profile.html',{'polls':polls})
+    try:
+        a = User.objects.get(username=cur_user)
+    except:
+        return HttpResponseRedirect(reverse('polls:login'))
+    else:
+        polls = Question.objects.filter(created_by=a.id)
+        return render(request,'polls/profile.html',{'polls':polls})
 
 def delete(request,question_id):
     a = Question.objects.get(id=question_id)

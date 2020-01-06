@@ -19,10 +19,16 @@
     </li>
    
 {% endfor %}
-
 </ul>
-<ul>
 
+<h1>Polls answered by me:</h1>
+<ul>
+{% for i in quests %}
+    <li>
+    {{ i.question_text }}
+    </li>
+   
+{% endfor %}
 </ul>
 {% endblock %}
 

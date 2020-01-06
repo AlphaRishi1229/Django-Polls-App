@@ -3,8 +3,12 @@
 {% block content %}
 <h1>{{ question.question_text }}</h1>
 
-{% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
-
+{% if error_message %}
+<p><strong>{{ error_message }}</strong></p>
+<button>
+<a href="{% url 'polls:results' question.id%}"> See Results </a>
+</button>
+{% else %}
 <form action="{% url 'polls:vote' question.id %}" method="post">
 {% csrf_token %}
 {% for choice in question.choice_set.all %}
@@ -12,6 +16,7 @@
     <label for="choice{{ forloop.counter }}">{{ choice.choice_text }}</label><br>
 {% endfor %}
 <input type="submit" value="Vote">
+{% endif %}
 
 <h2> Reviews for this question </h2>
 <ul>

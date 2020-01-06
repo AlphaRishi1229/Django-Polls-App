@@ -29,7 +29,6 @@ class Choice(models.Model):
 class User(models.Model):
     username = models.CharField(max_length=50,unique=True)
     password = models.CharField(max_length=16)
-    questions_answered = models.CharField(max_length = 5000)
     
     def __str__(self):
         return self.username
@@ -41,3 +40,10 @@ class Reviews(models.Model):
     
     def __str__(self):
         return self.review
+    
+class UserChoices(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    question = models.ForeignKey(Question, on_delete=models.CASCADE)
+    choice_selected = models.ForeignKey(Choice, on_delete=models.CASCADE)
+    
+    

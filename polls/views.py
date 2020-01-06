@@ -8,27 +8,38 @@ from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from .new_poll import PostQuestion,PostChoices,Review
 import logging
 
-from .models import Question, Choice, User, Reviews
-
-logger = logging.getLogger(__name__)
+from .models import Question, Choice, User, Reviews, UserChoices
 
 class IndexView(generic.ListView):
     template_name = 'polls/index.html'
     context_object_name = 'latest_question_list'
     paginate_by = 5
     def get_queryset(self):
-        return Question.objects.filter(
-            pub_date__lte=timezone.now()
-        ).order_by('-pub_date')
+        return Question.objects.filter(pub_date__lte=timezone.now()).order_by('-pub_date')
+    
+def detail(request,question_id):
+    question = get_object_or_404(Question, id=question_id)
+    cur_user = request.user
+    try:
+        a = User.objects.get(username=cur_user)
+    except:
+        return HttpResponseRedirect(reverse('polls:login'))
+    else:
+        quests = UserChoices.objects.filter(user_id=a.id)
+        q = []
+        l = []
+        for i in quests:
+            q.append(Question.objects.get(id=i.question_id))
+        final_set = set(q)
+        for j in final_set:
+            l.append(j.id)
+        if question_id in l:
+            return render(request,'polls/detail.html',
+                          {'question':question,
+                          'error_message':"You have already answered this poll."})        
+        else:
+            return render(request,'polls/detail.html',{'question':question})
    
-class DetailView(generic.DetailView):
-    model = Question
-    template_name = 'polls/detail.html'
-    
-    def get_queryset(self):
-        return Question.objects.filter(pub_date__lte=timezone.now())
-    
-    
 class ResultView(generic.DetailView):
     model = Question
     template_name = 'polls/results.html'
@@ -43,8 +54,11 @@ def vote(request, question_id):
             'error_message': "You didn't select a choice.",
         })
     else:
+        user = User.objects.get(username=request.user)
+        a = UserChoices(user_id=user.id,question_id=question.id,choice_selected_id=selected_choice.id)
         selected_choice.votes += 1
         selected_choice.save()
+        a.save()
         return HttpResponseRedirect(reverse('polls:results', args=(question.id,)))
 
 def signup(request):
@@ -151,7 +165,12 @@ def profile(request):
         return HttpResponseRedirect(reverse('polls:login'))
     else:
         polls = Question.objects.filter(created_by=a.id)
-        return render(request,'polls/profile.html',{'polls':polls})
+        quests = UserChoices.objects.filter(user_id=a.id)
+        q = []
+        for i in quests:
+            q.append(Question.objects.get(id=i.question_id))
+        final_set = set(q)
+        return render(request,'polls/profile.html',{'polls':polls,'quests':q})
 
 def delete(request,question_id):
     a = Question.objects.get(id=question_id)

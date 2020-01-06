@@ -1,0 +1,34 @@
+{% extends 'polls/base.html' %}
+
+{% block content %}
+
+<h1>Polls Created by me:</h1>
+
+{% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
+
+<ul>
+{% for i in polls %}
+    <li>
+    {{ i.question_text }}
+    <a href="{% url 'polls:delete' i.id %}">
+                Delete
+    </a>
+    <a href="{% url 'polls:update' i.id %}">
+                Edit
+    </a>
+    </li>
+   
+{% endfor %}
+
+</ul>
+<ul>
+
+</ul>
+{% endblock %}
+
+<script>
+function ondelete()
+{
+    location.href = "{% url 'polls:index' %}"
+}
+</script>

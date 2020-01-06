@@ -15,7 +15,7 @@ logger = logging.getLogger(__name__)
 class IndexView(generic.ListView):
     template_name = 'polls/index.html'
     context_object_name = 'latest_question_list'
-    
+    paginate_by = 5
     def get_queryset(self):
         return Question.objects.filter(
             pub_date__lte=timezone.now()
@@ -141,3 +141,59 @@ def review(request,question_id):
     else:
         form = Review()
     return render(request,'polls/new_review.html',{'form':form})
+
+def profile(request):
+    cur_user = request.user
+    a = User.objects.get(username=cur_user)
+    polls = Question.objects.filter(created_by=a.id)
+    return render(request,'polls/profile.html',{'polls':polls})
+
+def delete(request,question_id):
+    a = Question.objects.get(id=question_id)
+    a.delete()
+    return HttpResponseRedirect(reverse('polls:update', args=(question_id,)))
+ 
+def update(request,question_id):
+    a = Question.objects.get(id=question_id)
+    context = {'question':a}
+    return render(request,'polls/update.html',context) 
+    
+def update_poll(request,question_id):
+    if request.method == "POST":
+        form = PostQuestion(request.POST)
+        if form.is_valid():
+            quest = form.save(commit=False)
+            question = form.cleaned_data.get('question_text')
+            q = Question.objects.get(id=question_id)
+            q.question_text = question
+            q.pub_date = timezone.now()
+            q.save()
+            print(question)
+            return HttpResponseRedirect(reverse('polls:update', args=(question_id,)))
+    else:
+        form = PostQuestion()
+    return render(request, 'polls/new_poll.html',{'form':form})
+
+def update_choice(request,choice_id):
+    if request.method=="POST":
+        form = PostChoices(request.POST)
+        if form.is_valid():
+            choice = form.save(commit=False)
+            choices = form.cleaned_data.get('choice_text')
+            a = Choice.objects.get(id=choice_id)
+            a.choice_text = choices
+            dup = Choice.objects.filter(choice_text=choices,question_id=a.question_id)
+            if len(dup) >= 1:
+                return render(request,'polls/new_choice.html',{'error_message':"Choice already added"})
+            else:
+                a.save()
+                return HttpResponseRedirect(reverse('polls:update', args=(a.question_id,)))
+            print(choices)
+    else:
+        form = PostChoices()
+    return render(request,'polls/new_choice.html',{'form':form})
+
+def delete_choice(request,choice_id):
+    a = Choice.objects.get(id=choice_id)
+    a.delete()
+    return HttpResponseRedirect(reverse('polls:update', args=(a.question_id,)))

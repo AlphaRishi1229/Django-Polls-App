@@ -18,6 +18,7 @@
 {% for review in question.reviews_set.all %}
     <li>{{ review.review }}</li>
 {% endfor %}
+<a href="{% url 'polls:review' question.id %}"> Add a Review? </a>
 </ul>
 </form>
 {% endblock %}

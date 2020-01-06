@@ -10,6 +10,14 @@
     <form method="POST" class="post-form">{% csrf_token %}
         {{ form.as_p }}
         <button type="submit" class="save btn btn-default">Save And Add More</button>
+    <ul>
+    {% for choice in question.choice_set.all %}
+    <li>{{ choice.choice_text }}
+    <a href="{% url 'polls:delete_choice' choice.id%}"> Delete </a>
+    </li> 
+    {% endfor %}
+    </ul>
     </form>
+    
 
 {% endblock %}

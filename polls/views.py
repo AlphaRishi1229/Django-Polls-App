@@ -19,7 +19,7 @@ class IndexView(generic.ListView):
     def get_queryset(self):
         return Question.objects.filter(
             pub_date__lte=timezone.now()
-        ).order_by('-pub_date')[:5]
+        ).order_by('-pub_date')
    
 class DetailView(generic.DetailView):
     model = Question
@@ -105,6 +105,7 @@ def new_poll(request):
     return render(request, 'polls/new_poll.html',{'form':form})
 
 def new_choice(request,question_id):
+    q = Question.objects.get(id=question_id)
     if request.method=="POST":
         form = PostChoices(request.POST)
         if form.is_valid():
@@ -120,7 +121,7 @@ def new_choice(request,question_id):
             print(choices)
     else:
         form = PostChoices()
-    return render(request,'polls/new_choice.html',{'form':form})
+    return render(request,'polls/new_choice.html',{'form':form,'question':q})
 
 def review(request,question_id):
     if request.method == "POST":
@@ -155,7 +156,7 @@ def profile(request):
 def delete(request,question_id):
     a = Question.objects.get(id=question_id)
     a.delete()
-    return HttpResponseRedirect(reverse('polls:update', args=(question_id,)))
+    return HttpResponseRedirect(reverse('polls:profile'))
  
 def update(request,question_id):
     a = Question.objects.get(id=question_id)

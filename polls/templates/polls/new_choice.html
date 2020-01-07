@@ -10,6 +10,7 @@
     <form method="POST" class="post-form">{% csrf_token %}
         {{ form.as_p }}
         <button type="submit" class="save btn btn-default">Save And Add More</button>
+       
     <ul>
     {% for choice in question.choice_set.all %}
     <li>{{ choice.choice_text }}
@@ -18,6 +19,15 @@
     {% endfor %}
     </ul>
     </form>
-    
+    <button><a href = "{% url 'polls:index' %}">Done adding choices</a></button>
 
 {% endblock %}
+
+
+<script>
+
+function gohome(){
+    location.href = "{% url 'polls:index' %}"
+}
+
+</script>

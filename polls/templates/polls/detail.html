@@ -21,7 +21,7 @@
 <h2> Reviews for this question </h2>
 <ul>
 {% for review in question.reviews_set.all %}
-    <li>{{ review.review }}</li>
+    <li>{{ review.review }} - {{ review.user_id}} </li>
 {% endfor %}
 <a href="{% url 'polls:review' question.id %}"> Add a Review? </a>
 </ul>

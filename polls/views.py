@@ -138,23 +138,23 @@ def new_choice(request,question_id):
     return render(request,'polls/new_choice.html',{'form':form,'question':q})
 
 def review(request,question_id):
-    if request.method == "POST":
-        form = Review(request.POST)
-        if form.is_valid():
-            rev = form.save(commit=False)
-            rev.questions_id_id = question_id
-            try:
-                a = User.objects.get(username=request.user)
-            except:
-                return HttpResponseRedirect(reverse('polls:login'))
-            else:
+    try:
+        a = User.objects.get(username=request.user)
+    except:
+        return HttpResponseRedirect(reverse('polls:login'))
+    else:
+        if request.method == "POST":
+            form = Review(request.POST)
+            if form.is_valid():
+                rev = form.save(commit=False)
+                rev.questions_id_id = question_id
                 rev.user_id_id = a.id
                 reviews = form.cleaned_data.get('review')
                 rev.save()
                 print(reviews)
                 return HttpResponseRedirect(reverse('polls:index'))
-    else:
-        form = Review()
+        else:
+            form = Review()
     return render(request,'polls/new_review.html',{'form':form})
 
 def profile(request):

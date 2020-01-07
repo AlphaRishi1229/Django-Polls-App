@@ -5,6 +5,8 @@ from django.views import generic
 from django.utils import timezone
 from django.contrib.auth import login as auth_login, authenticate, logout as auth_logout
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
+from django.views.decorators.cache import cache_control
+
 from .new_poll import PostQuestion,PostChoices,Review
 import logging
 
@@ -39,7 +41,7 @@ def detail(request,question_id):
                           'error_message':"You have already answered this poll."})        
         else:
             return render(request,'polls/detail.html',{'question':question})
-   
+
 class ResultView(generic.DetailView):
     model = Question
     template_name = 'polls/results.html'
@@ -56,10 +58,14 @@ def vote(request, question_id):
     else:
         user = User.objects.get(username=request.user)
         a = UserChoices(user_id=user.id,question_id=question.id,choice_selected_id=selected_choice.id)
-        selected_choice.votes += 1
-        selected_choice.save()
-        a.save()
-        return HttpResponseRedirect(reverse('polls:results', args=(question.id,)))
+        validator = UserChoices.objects.filter(user_id=user.id,question_id=question.id)
+        if len(validator) >= 1:
+            return render(request,'polls/detail.html',{'question':question,'error_message':"You have already answered this poll"})
+        else:
+            selected_choice.votes += 1
+            selected_choice.save()
+            a.save()
+            return HttpResponseRedirect(reverse('polls:results', args=(question.id,)))
 
 def signup(request):
     if request.method == 'POST':

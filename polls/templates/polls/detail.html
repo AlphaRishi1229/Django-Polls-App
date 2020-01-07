@@ -8,6 +8,9 @@
 <button>
 <a href="{% url 'polls:results' question.id%}"> See Results </a>
 </button>
+<button>
+<a href="{% url 'polls:change_response' question.id%}"> Change Response </a>
+</button>
 {% else %}
 <form action="{% url 'polls:vote' question.id %}" method="post">
 {% csrf_token %}

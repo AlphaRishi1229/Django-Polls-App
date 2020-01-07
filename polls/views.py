@@ -221,3 +221,13 @@ def delete_choice(request,choice_id):
     a = Choice.objects.get(id=choice_id)
     a.delete()
     return HttpResponseRedirect(reverse('polls:update', args=(a.question_id,)))
+
+def change_response(request,question_id):
+    cur_user = request.user
+    a = User.objects.get(username=cur_user)
+    to_del = UserChoices.objects.get(user_id=a.id,question_id=question_id)
+    to_del.delete()
+    b = Choice.objects.get(question_id=question_id,id=to_del.choice_selected_id)
+    b.votes -= 1
+    b.save()
+    return HttpResponseRedirect(reverse('polls:detail', args=(question_id,)))

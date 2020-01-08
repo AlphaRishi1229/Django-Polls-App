@@ -58,6 +58,8 @@ def vote(request, question_id):
     else:
         user = User.objects.get(username=request.user)
         a = UserChoices(user_id=user.id,question_id=question.id,choice_selected_id=selected_choice.id)
+        num_votes = UserChoices.objects.filter(choice_selected_id=selected_choice.id)
+        test = len(num_votes)
         validator = UserChoices.objects.filter(user_id=user.id,question_id=question.id)
         if len(validator) >= 1:
             return render(request,'polls/detail.html',{'question':question,'error_message':"You have already answered this poll"})

@@ -20,5 +20,5 @@ urlpatterns = [
     path('<int:question_id>/edit_poll/',views.update_poll,name='update_poll'),
     path('<int:choice_id>/edit_choice/',views.update_choice,name='update_choice'),
     path('<int:choice_id>/delete_choice/',views.delete_choice,name='delete_choice'),
-    path('<int:question_id>/change_response/',views.change_response,name='change_response')
+    path('<int:question_id>/change_response/',views.change_response,name='change_response'),
 ]

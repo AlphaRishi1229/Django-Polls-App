@@ -3,6 +3,7 @@
 {% block content %}
 <h1>{{ question.question_text }}</h1>
 <a href="{% url 'polls:update_poll' question.id %}">Edit Question</a>
+<a href="{% url 'polls:new_choice' question.id%}"> Add choice </a>
 <ul>
 {% for choice in question.choice_set.all %}
     <li>{{ choice.choice_text }}

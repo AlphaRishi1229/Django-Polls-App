@@ -5,7 +5,12 @@
 
 <ul>
 {% for choice in question.choice_set.all %}
-    <li>{{ choice.choice_text }} -- {{ choice.votes }} vote{{ choice.votes|pluralize }}</li>
+    <li>{{ choice.choice_text }} -- {{ choice.votes }} vote{{ choice.votes|pluralize }} ------>
+    {% for user in choice.userchoices_set.all %}
+    [{{user.user}}]
+    {% endfor %}
+    </li>
+    
 {% endfor %}
 </ul>
 <a href="{% url 'polls:detail' question.id %}">Vote again?</a>
